@@ -2,6 +2,9 @@
 
 # Mininet install script for Ubuntu (and Debian Wheezy+)
 # Brandon Heller (brandonh@stanford.edu)
+# Install for Debian 9.9 by Geraldo Ribeiro <geraldo@intmain.io>
+
+set -x
 
 # Fail on error
 set -e
@@ -136,7 +139,14 @@ function install_ccnx () {
 		    echo "Directory $CCNX_DIR already exists. Aborting."
 		    exit 1
 	    fi
-	    
+	
+      if [[ "$DIST" == "Debian" ]]; then
+          sudo apt-get update
+          $install libssl-dev libexpat1-dev libpcap-dev libxml2-utils \
+            vlc wireshark openjdk-11-jdk ant git-core gcc \
+            athena-jot python-dev make wget
+      else
+
         if [ $(expr ${RELEASE} \>= ${DAS}) -eq 1 ]; then
             sudo touch /etc/apt/sources.list2
             sudo sed 's/\< restricted\>//'g /etc/apt/sources.list > /etc/apt/sources.list2
@@ -153,6 +163,9 @@ function install_ccnx () {
 		        vlc wireshark openjdk-7-jdk ant git-core gcc \
 		        athena-jot python-dev make wget
         fi
+
+      fi
+
 	    pushd "$CCNX_DIR"
 	    sudo wget http://www.ccnx.org/releases/ccnx-0.8.2.tar.gz
 	    sudo tar -xvzf ccnx-0.8.2.tar.gz
